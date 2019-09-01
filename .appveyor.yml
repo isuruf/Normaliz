@@ -26,7 +26,7 @@ before_build:
   - set "RANLIB=llvm-ranlib.exe"
   - set "NM=llvm-nm.exe"
   - set "LD=lld-link.exe"
-  - FOR /F "delims=" %%i in ('cygpath.exe -u "%CONDA_PREFIX%\Library"') DO set "PREFIX=%%i"
+  - FOR /F "delims=" %%i in ('cygpath.exe -u "%CONDA_PREFIX%"') DO set "PREFIX=%%i/Library"
   - echo "PREFIX:%PREFIX%"
   - set "CFLAGS=-I%PREFIX%/include -O2 -D_CRT_SECURE_NO_WARNINGS -D_MT -fuse-ld=lld"
   - set "CXXFLAGS=%CFLAGS%"
