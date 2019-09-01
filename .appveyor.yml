@@ -14,8 +14,7 @@ install:
   - call %CONDA_INSTALL_LOCN%\Scripts\activate.bat
   - call "%VCVARSALL%" amd64
   - conda config --add channels conda-forge --force
-  - conda install --yes --quiet posix m2-automake-wrapper m2-libtool m2-autoconf m2-make m2-findutils m2-m4 pthreads-win32 nauty mpir boost-cpp
-  #- conda install --yes --quiet clangxx llvm-tools lld
+  - conda install --yes --quiet clangxx llvm-tools llvm-openmp posix m2-automake-wrapper m2-libtool m2-autoconf m2-make m2-findutils m2-m4 pthreads-win32 nauty mpir boost-cpp
 
 before_build:
   - set MSYSTEM=MINGW%ARCH%
@@ -30,10 +29,10 @@ before_build:
   - FOR /F "delims=" %%i in ('cygpath.exe -u "%CONDA_PREFIX%"') DO set "PREFIX=%%i/Library"
   - echo "PREFIX:%PREFIX%"
   - cp "%CONDA_PREFIX%/Library/lib/gmp.lib" "%CONDA_PREFIX%/Library/lib/gmpxx.lib"
-  - set "CFLAGS=-I%PREFIX%/include -O2 -D_CRT_SECURE_NO_WARNINGS -D_MT -fuse-ld=lld"
+  - set "CFLAGS=-I%PREFIX%/include -O2 -D_CRT_SECURE_NO_WARNINGS -D_MT"
   - set "CXXFLAGS=%CFLAGS%"
   - set "CPPFLAGS=%CFLAGS%"
-  - set "LDFLAGS=-L%PREFIX%/lib -fuse-ld=lld"
+  - set "LDFLAGS=-L%PREFIX%/lib"
   - set "lt_cv_deplibs_check_method=pass_all"
 
 build_script:
