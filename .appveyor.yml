@@ -1,0 +1,58 @@
+platform: 
+  - x64
+
+os: Visual Studio 2017
+
+clone_depth: 5
+
+matrix:
+  fast_finish: false
+
+environment:
+  global:
+    CONDA_INSTALL_LOCN_32: "C:\\Miniconda36"
+    CONDA_INSTALL_LOCN_64: "C:\\Miniconda36-x64"
+    VCVARSALL: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvarsall.bat"
+  matrix:
+    - ARCH: 32
+    - ARCH: 64
+
+install:
+  - set "PATH=C:\msys64\mingw%ARCH%\bin;%PATH%"
+  - if [%ARCH%]==[64] set "CONDA_INSTALL_LOCN=%CONDA_INSTALL_LOCN_64%"
+  - if [%ARCH%]==[32] set "CONDA_INSTALL_LOCN=%CONDA_INSTALL_LOCN_32%"
+  - call %CONDA_INSTALL_LOCN%\Scripts\activate.bat
+  - if [%ARCH%]==[64] call "%VCVARSALL%" x64
+  - if [%ARCH%]==[32] call "%VCVARSALL%" x86
+  - conda config --add channels conda-forge --force
+  - conda install --yes --quiet autotools_clang_conda llvm-openmp pthreads-win32 nauty mpir boost-cpp
+
+before_build:
+  - set MSYSTEM=MINGW%ARCH%
+  - set MSYS2_PATH_TYPE=inherit
+  - set CHERE_INVOKING=1
+  - set "CC=clang.exe"
+  - set "CXX=clang.exe"
+  - set "AR=llvm-ar.exe"
+  - set "RANLIB=llvm-ranlib.exe"
+  - set "NM=llvm-nm.exe"
+  - set "LD=lld-link.exe"
+  - FOR /F "delims=" %%i in ('cygpath.exe -u "%CONDA_PREFIX%\Library"') DO set "PREFIX=%%i"
+  - set "CFLAGS=-I%PREFIX%/include -O2 -D_CRT_SECURE_NO_WARNINGS -D_MT -fuse-ld=lld"
+  - set "CXXFLAGS=%CFLAGS%"
+  - set "CPPFLAGS=%CFLAGS%"
+  - set "LDFLAGS="-L%PREFIX%/lib -fuse-ld=lld -nostdlib -Xclang --dependent-lib=msvcrt"
+  - set "lt_cv_deplibs_check_method=pass_all"
+
+build_script:
+  - bash -lce "cd /c/projects/Normaliz && ./configure --prefix=/c/artifacts/normaliz --with-nauty=$PREFIX -with-gmp=\"$PREFIX\""
+  - bash -lce "cd /c/projects/Normaliz && make -j2"
+  - bash -lce "cd /c/projects/Normaliz && make install"
+  - cp "%CONDA_PREFIX%"\Library\bin\libomp.dll C:\artifacts\normaliz\
+  - cp "%CONDA_PREFIX%"\Library\bin\mpir.dll C:\artifacts\normaliz\
+  - 7z a C:\normaliz.zip C:\artifacts
+  - ps: Push-AppveyorArtifact C:\normaliz.zip
+
+test_script:
+  - bash -lce "cd /c/projects/Normaliz && make check"
+
