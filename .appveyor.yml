@@ -14,7 +14,8 @@ install:
   - call %CONDA_INSTALL_LOCN%\Scripts\activate.bat
   - call "%VCVARSALL%" amd64
   - conda config --add channels conda-forge --force
-  - conda install --yes --quiet clangxx llvm-tools lld posix m2-automake-wrapper m2-libtool m2-autoconf m2-make m2-findutils m2-m4 pthreads-win32 nauty mpir boost-cpp
+  - conda install --yes --quiet posix m2-automake-wrapper m2-libtool m2-autoconf m2-make m2-findutils m2-m4 pthreads-win32 nauty mpir boost-cpp
+  #- conda install --yes --quiet clangxx llvm-tools lld
 
 before_build:
   - set MSYSTEM=MINGW%ARCH%
@@ -37,7 +38,7 @@ before_build:
 
 build_script:
   - bash -lce "cd /c/projects/Normaliz && autoreconf -i && chmod +x configure"
-  - bash -lce "cd /c/projects/Normaliz && ./configure --prefix=/c/artifacts/normaliz --with-nauty=%PREFIX% -with-gmp=%PREFIX% || (cat config.log; false)"
+  - bash -lce "cd /c/projects/Normaliz && ./configure --disable-shared --prefix=/c/artifacts/normaliz --with-nauty=%PREFIX% -with-gmp=%PREFIX% || (cat config.log; false)"
   - bash -lce "cd /c/projects/Normaliz && make -j2"
   - bash -lce "cd /c/projects/Normaliz && make install"
 
