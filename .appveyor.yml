@@ -31,7 +31,7 @@ before_build:
   - set "CFLAGS=-I%PREFIX%/include -O2 -D_CRT_SECURE_NO_WARNINGS -D_MT -fuse-ld=lld"
   - set "CXXFLAGS=%CFLAGS%"
   - set "CPPFLAGS=%CFLAGS%"
-  - set "LDFLAGS="-L%PREFIX%/lib -fuse-ld=lld"
+  - set "LDFLAGS=-L%PREFIX%/lib -fuse-ld=lld"
   - set "lt_cv_deplibs_check_method=pass_all"
 
 build_script:
