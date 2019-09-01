@@ -37,13 +37,13 @@ before_build:
 
 build_script:
   - bash -lce "cd /c/projects/Normaliz && autoreconf -i && chmod +x configure"
-  - bash -lce "cd /c/projects/Normaliz && ./configure --disable-shared --prefix=/c/artifacts/normaliz --with-nauty=%PREFIX% -with-gmp=%PREFIX% || (cat config.log; false)"
+  - bash -lce "cd /c/projects/Normaliz && ./configure --disable-shared --prefix=/c/normaliz --with-nauty=%PREFIX% -with-gmp=%PREFIX% || (cat config.log; false)"
   - bash -lce "cd /c/projects/Normaliz && make -j2"
   - bash -lce "cd /c/projects/Normaliz && make install"
 
-  - cp "%CONDA_PREFIX%"\Library\bin\libomp.dll C:\artifacts\normaliz\
-  - cp "%CONDA_PREFIX%"\Library\bin\mpir.dll C:\artifacts\normaliz\
-  - 7z a C:\normaliz.zip C:\artifacts
+  - cp "%CONDA_PREFIX%"\Library\bin\libomp.dll C:\normaliz\bin\
+  - cp "%CONDA_PREFIX%"\Library\bin\mpir.dll C:\normaliz\bin\
+  - 7z a C:\normaliz.zip C:\normaliz
   - ps: Push-AppveyorArtifact C:\normaliz.zip
 
 test_script:
