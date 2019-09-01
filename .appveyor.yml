@@ -27,6 +27,7 @@ before_build:
   - set "NM=llvm-nm.exe"
   - set "LD=lld-link.exe"
   - FOR /F "delims=" %%i in ('cygpath.exe -u "%CONDA_PREFIX%\Library"') DO set "PREFIX=%%i"
+  - echo "PREFIX:%PREFIX%"
   - set "CFLAGS=-I%PREFIX%/include -O2 -D_CRT_SECURE_NO_WARNINGS -D_MT -fuse-ld=lld"
   - set "CXXFLAGS=%CFLAGS%"
   - set "CPPFLAGS=%CFLAGS%"
@@ -35,7 +36,7 @@ before_build:
 
 build_script:
   - bash -lce "cd /c/projects/Normaliz && autoreconf -i && chmod +x configure"
-  - bash -lce "cd /c/projects/Normaliz && ./configure --prefix=/c/artifacts/normaliz --with-nauty=$PREFIX -with-gmp=\"$PREFIX\" || (cat config.log; false)"
+  - bash -lce "cd /c/projects/Normaliz && ./configure --prefix=/c/artifacts/normaliz --with-nauty=%PREFIX% -with-gmp=%PREFIX% || (cat config.log; false)"
   - bash -lce "cd /c/projects/Normaliz && make -j2"
   - bash -lce "cd /c/projects/Normaliz && make install"
 
